@@ -58,6 +58,7 @@ function addProbesGui() {
     probesFolder.add(options, 'lngCol', options.columns).listen().name('Longitude Column');
     probesFolder.add(options, 'heading').name('Show Heading');
     probesFolder.add(options, 'headingCol', options.columns).listen().name('Heading Column');
+    probesFolder.open();
 
     gui.removeFolder('Trips');
     var tripsFolder = gui.addFolder('Trips');
