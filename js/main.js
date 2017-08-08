@@ -131,7 +131,11 @@ function transformProbe(probe, options) {
     var lng = +getOrElse(probe, options.lngCol, 0, LNG_VALIDATOR);
     var heading = +getOrElse(probe, options.headingCol, -1, HEADING_VALIDATOR);
     var vehicleId = getOrElse(probe, options.tripIdentifierColumn, '');
-    var timestamp = new Date(getOrElse(probe, options.timeColumn, 0));
+    var timestamp = getOrElse(probe, options.timeColumn, 0);
+    if (!NUMBER_VALIDATOR(timestamp)) {
+        timestamp = new Date(timestamp);
+    }
+    
     let res = {
         lat: lat,
         lng: lng,
