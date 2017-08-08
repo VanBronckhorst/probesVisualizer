@@ -59,3 +59,27 @@ body {
     overflow: scroll;
     font-size: 12px;
 }
+
+#legend {
+    position: absolute;
+    z-index: 999;
+    max-width: 300px;
+    background-color: #eee;
+    border-radius: 5px;
+    max-height: 150px;
+    overflow-y: scroll;
+    padding: 5px;
+    visibility: hidden;
+}
+
+.circle {
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	display: inline-block;
+}
+
+.legend-title {
+    margin-top: 0;
+    margin-bottom: 10px;
+}

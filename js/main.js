@@ -116,6 +116,12 @@ function updateMap() {
     }else {
         probes.map(p => map.drawProbe(p, options));
     }
+
+    if (options.dataColor) {
+        displayScale();
+    } else {
+        eraseScale();
+    }
 }
 
 function handleProbes(probes) {
@@ -186,6 +192,11 @@ function prepareColorScale(probes) {
     var colorFun = () => options.probesColor;
 
     if (numerical) {
+        var scale = d3.interpolateRdYlGn;
+        options.scale = scale;
+        options.scaleType = 'sequential';
+        options.scaleMin = min;
+        options.scaleMax = max;
         colorFun = (probe) => {
             var val = +probe[options.dataColumn];
             var range = max - min;
@@ -193,10 +204,12 @@ function prepareColorScale(probes) {
                 return options.probesColor;
             }
             val = (val - min) / range;
-            return d3.interpolateRdYlGn(val)
+            return scale(val);
         }
     }else {
-        var scale = d3.scaleOrdinal(d3.schemeAccent)
+        var scale = d3.scaleOrdinal(d3.schemeAccent);
+        options.scale = scale;
+        options.scaleType = 'ordinal';
         colorFun = (probe) => {
             var val = probe[options.dataColumn];
             return scale(val);
@@ -204,6 +217,34 @@ function prepareColorScale(probes) {
     }
 
     options.colorFun = colorFun;
+}
+
+function displayScale() {
+    var leg = document.getElementById('legend');
+    leg.style.visibility = 'visible';
+    leg.innerHTML = '';
+    leg.innerHTML += '<h5 class="legend-title">Legend</h3>';
+    if (options.scaleType === 'ordinal') {
+        var dom = options.scale.domain();
+        dom = JSON.parse(JSON.stringify(dom));
+        dom.sort();
+        dom.forEach(d => {
+            var color = options.scale(d);
+            leg.innerHTML += '<div><span style="background-color:' + color + '" class="circle"></span>' + d + '</div>'
+        });
+    }else if(options.scaleType === 'sequential') {
+        var scale = options.scale;
+        var min = options.scaleMin;
+        var max = options.scaleMax;
+        leg.innerHTML += '<div><span style="background-color:' + scale(0) + '" class="circle"></span>' + min + '</div>'
+        leg.innerHTML += '<div><span style="background-color:' + scale(0.5) + '" class="circle"></span>' + ((+max + min) / 2) + '</div>'
+        leg.innerHTML += '<div><span style="background-color:' + scale(1) + '" class="circle"></span>' + max + '</div>'
+    }
+}
+
+function eraseScale() {
+    document.getElementById('legend').innerHTML = '';
+    document.getElementById('legend').style.visibility = 'hidden';
 }
 
 // given a list of probes with a vehicleId attribute, returns them grouped by it
